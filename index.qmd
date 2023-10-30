@@ -12,7 +12,7 @@ In this project , we have experimented with different quarto settings, and analy
 
 When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
  library(foreign)
  library(ggplot2)
  library(DT)
@@ -73,3 +73,67 @@ means_rounded2 <- means2
 means_rounded2[, -1] <- round(means2[, -1], digits = 1)
 datatable(means_rounded2)
 ```
+
+```{r, warning = FALSE, message = FALSE}
+library(dplyr)
+library(purrr)
+library(readxl)
+library(stringr)
+library(janitor)
+
+```
+
+```{r}
+# The url below points to an Excel file
+# hosted on the book's github repository
+url <- "https://is.gd/1vvBAc"
+
+raw_data <- tempfile(fileext = ".xlsx")
+
+download.file(url, raw_data,
+              method = "auto",
+              mode = "wb")
+
+sheets <- excel_sheets(raw_data)
+
+read_clean <- function(..., sheet){
+  read_excel(..., sheet = sheet) |>
+    mutate(year = sheet)
+}
+
+raw_data <- map(
+  sheets,
+  ~read_clean(raw_data,
+              skip = 10,
+              sheet = .)
+                   ) |>
+  bind_rows() |>
+  clean_names()
+
+raw_data <- raw_data |>
+  rename(
+    locality = commune,
+    n_offers = nombre_doffres,
+    average_price_nominal_euros = prix_moyen_annonce_en_courant,
+    average_price_m2_nominal_euros = prix_moyen_annonce_au_m2_en_courant,
+    average_price_m2_nominal_euros = prix_moyen_annonce_au_m2_en_courant
+  ) |>
+  mutate(locality = str_trim(locality)) |>
+  select(year, locality, n_offers, starts_with("average"))
+
+
+```
+
+```{r}
+raw_data$average_price_m2_nominal_euros[raw_data$average_price_m2_nominal_euros=="*"]=NA
+```
+
+```{r}
+filter1=raw_data[order(raw_data$average_price_m2_nominal_euros),c(1,2,5)]
+filter2= filter1[filter1$year=="2010",]
+
+
+head(filter2)
+```
+
+The cheapest places mer m2 are listed above, notice how most of their names starts with W
