@@ -1,0 +1,75 @@
+---
+title: "Quarto 572 HW"
+format: html
+editor: visual
+---
+
+## Project Beginning
+
+In this project , we have experimented with different quarto settings, and analysed a data set named "Popular Kids"
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+ library(foreign)
+ library(ggplot2)
+ library(DT)
+ setwd(here::here()) 
+ dataset=read.arff("PopularKids.arff")
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+custom_palette <- c("Sports" = "dodgerblue", "Popular" = "salmon")
+ggplot(dataset, aes(x = Goals, y = Grades, fill = Goals)) +
+  geom_boxplot() +
+  scale_fill_manual(values = custom_palette) +
+  labs(title = "Boxplot of Grades by Goals",
+       x = "Goals",
+       y = "Grades") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+result <- kruskal.test(Grades ~ Goals, data = dataset)
+
+# Print the test result
+print(result)
+
+means <- aggregate(Grades ~ Goals, data = dataset, FUN = mean)
+
+# Print the means
+print(means)
+
+means <- aggregate(. ~ Goals, data = dataset[, c("Goals", "Grades", "Sports", "Looks", "Money")], FUN = mean)
+means_rounded <- means
+means_rounded[, -1] <- round(means[, -1], digits = 1)
+datatable(means_rounded)
+```
+
+```{r}
+
+a=table(dataset$Gender,dataset$Goals)
+df=as.matrix(a)
+colnames(df)
+rownames(df)
+data_frame=rbind(c("",colnames(df)),c("boy",df[1,1:3]),c("girl",df[2,1:3]))
+datatable(data_frame)
+```
+
+```{r}
+
+
+means2 <- aggregate(. ~Gender, data = dataset[, c("Gender", "Grades", "Sports", "Looks", "Money")], FUN = mean)
+means_rounded2 <- means2
+means_rounded2[, -1] <- round(means2[, -1], digits = 1)
+datatable(means_rounded2)
+```
