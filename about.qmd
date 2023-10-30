@@ -2,7 +2,7 @@
 title: "About"
 ---
 
-About this site
+Alican, Altan, Çağatay
 
 ```{r}
 1 + 1
