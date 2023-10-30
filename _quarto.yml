@@ -8,9 +8,9 @@ website:
       - href: index.qmd
         text: Home
       - href: index2.qmd
-        text: SweetHome
+        text: FirstCommit
       - href: index3.qmd
-        text: HomelessHome
+        text: SecondCommit
       - href: project_start.qmd
         text: MisterRodrigez'sProject
       - about.qmd
