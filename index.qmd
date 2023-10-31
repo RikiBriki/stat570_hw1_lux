@@ -133,7 +133,15 @@ filter1=raw_data[order(raw_data$average_price_m2_nominal_euros),c(1,2,5)]
 filter2= filter1[filter1$year=="2010",]
 
 
-head(filter2)
+data=head(filter2)
+
+ggplot(data, aes(x = locality, y = as.numeric(average_price_m2_nominal_euros), fill = locality)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Price per m² in 2010",
+       x = "Locality",
+       y = "Average Price per m² (Nominal Euros)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+  scale_y_continuous(labels = scales::number_format(accuracy = 0.01))
 ```
 
 The cheapest places mer m2 are listed above, notice how most of their names starts with W
