@@ -10,9 +10,11 @@ website:
       - href: index2.qmd
         text: FirstCommit
       - href: index3.qmd
-        text: SecondCommit
+        text: patates domates
       - href: project_start.qmd
         text: MisterRodrigez'sProject
+      - href: shiny_app.qmd
+        text: shiny app test
       - about.qmd
 
 format:

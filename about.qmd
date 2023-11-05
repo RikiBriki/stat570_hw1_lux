@@ -2,8 +2,12 @@
 title: "About"
 ---
 
-Alican, Altan, Çağatay
+Alican
 
-```{r}
-1 + 1
-```
+Altan
+
+Cagatay
+
+Stat570
+
+HW1
