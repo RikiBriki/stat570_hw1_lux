@@ -1,29 +1,8 @@
-# Project start
+# House Prices in Luxembourg
 
-In this chapter, we are going to work together on a very simple project. This project will stay with us until the end of the book. As we will go deeper into the book together, you will rewrite that project by implementing the techniques I will teach you. By the end of the book you will have built a reproducible analytical pipeline. To get things going, we are going to keep it simple; our goal here is to get an analysis done, that's it. We won't focus on reproducibility. We are going to download some data, and analyse it, that's it.
+In this project, house prices in Luxembourg will be investigated. If there are cities in your country, Luxembourg is a bit different from your country. Luxembourg consists of Cantons and each Cantons is divided into Communes. If you want to compare with the USA, states is cantons, and counties is communes. This could be a different for other countries. For similar projects, you have to know these information. There is a canton called Luxembourg and also there is a commune called Luxembourg. This commune is city of Luxembourg, called Luxembourg City in some sources. The capital of the Luxembourg is Luxembourg City. This situation creates some problems.
 
-## Housing in Luxembourg
-
-We are going to download data about house prices in Luxembourg. Luxembourg is a little Western European country the author hails from that looks like a shoe and is about the size of .98 Rhode Islands. Did you know that Luxembourg is a constitutional monarchy, and not a kingdom like Belgium, but a Grand-Duchy, and actually the last Grand-Duchy in the World? Also, what you should know to understand what we will be doing is that the country of Luxembourg is divided into Cantons, and each Cantons into Communes. If Luxembourg was the USA, Cantons would be States and Communes would be Counties (or Parishes or Boroughs). What's confusing is that "Luxembourg" is also the name of a Canton, and of a Commune, which also has the status of a city and is the capital of the country. So Luxembourg the country, is divided into Cantons, one of which is called Luxembourg as well, cantons are divided into communes, and inside the canton of Luxembourg, there's the commune of Luxembourg which is also the city of Luxembourg, sometimes called Luxembourg City, which is the capital of the country.
-
-::: {.content-hidden when-format="pdf"}
-<figure>
-
-![Luxembourg is about as big as the US State of Rhode Island.](images/lux_rhode_island.png){alt="Luxembourg is about as big as the US State of Rhode Island."}</img>
-
-<figcaption>Luxembourg is about as big as the US State of Rhode Island.</figcaption>
-
-</figure>
-:::
-
-::: {.content-visible when-format="pdf"}
-```{r, echo = F, out.width="300px"}
-#| fig-cap: "Luxembourg is about as big as the US State of Rhode Island."
-knitr::include_graphics("images/lux_rhode_island.png")
-```
-:::
-
-What you should also know is that the population is about 645,000 as of writing (January 2023), half of which are foreigners. Around 400,000 persons work in Luxembourg, of which half do not live in Luxembourg; so every morning from Monday to Friday, 200,000 people enter the country to work and then leave in the evening to go back to either Belgium, France or Germany, the neighbouring countries. As you can imagine, this puts enormous pressure on the transportation system and on the roads, but also on the housing market; everyone wants to live in Luxembourg to avoid the horrible daily commute, and everyone wants to live either in the capital city, or in the second largest urban area in the south, in a city called Esch-sur-Alzette.
+The population of the country is around 640000. Of the approximately 400,000 people working in Luxembourg, 200,000 live in surrounding countries. This means that these people are coming from other countries to work in workdays, and they leave the country after the work. People do not want to do this everyday want to live in Luxembourg. The house prices are increasing for this reason. To avoid this problem, people want to live in Luxembourg City and other largest cities like Esch-sur-Alzette.
 
 The plot below shows the value of the House Price Index over time for Luxembourg and the European Union:
 
@@ -45,15 +24,17 @@ Let us paste the definition of the HPI in here (taken from the HPI's [metadata](
 
 *The House Price Index (HPI) measures inflation in the residential property market. The HPI captures price changes of all types of dwellings purchased by households (flats, detached houses, terraced houses, etc.). Only transacted dwellings are considered, self-build dwellings are excluded. The land component of the dwelling is included.*
 
-So from the plot, we can see that the price of dwellings more than doubled between 2010 and 2021; the value of the index is 214.81 in 2021 for Luxembourg, and 138.92 for the European Union as a whole.
+The plot shows the value of index is similar for Luxembourg and the European Union in 2010, around 100.0. On the other hand, the index is doubled in Luxembourg against the European Union in 2021. The index for Luxembourg is around 213, and for the European Union is around 134.0.
 
 There is a lot of heterogeneity though; the capital and the communes right next to the capital are much more expensive than communes from the less densely populated north, for example. The south of the country is also more expensive than the north, but not as much as the capital and surrounding communes. Not only is price driven by demand, but also by scarcity; in 2021, 0.5% of residents owned 50% of the buildable land for housing purposes (Source: *Observatoire de l'Habitat, Note 29*, [archived download link](https://archive.org/download/note-29/note-29.pdf)[^index2-3]).
 
 [^index2-3]: https://archive.org/download/note-29/note-29.pdf
 
-Our project will be quite simple; we are going to download some data, supplied as an Excel file, compiled by the Housing Observatory (*Observatoire de l'Habitat*, a service from the Ministry of Housing, which monitors the evolution of prices in the housing market, among other useful services like the identification of vacant lots). The advantage of their data when compared to Eurostat's data is that the data is disaggregated by commune. The disadvantage is that they only supply nominal prices, and no index (and the data is trapped inside Excel and not ready for analysis with R). Nominal prices are the prices that you read on price tags in shops. The problem with nominal prices is that it is difficult to compare them through time. Ask yourself the following question: would you prefer to have had 500€ (or USDs) in 2003 or in 2023? You probably would have preferred them in 2003, as you could purchase a lot more with \$500 then than now. In fact, according to a random inflation calculator I googled, to match the purchasing power of \$500 in 2003, you'd need to have \$793 in 2023 (and I'd say that we find very similar values for €). But it doesn't really matter if that calculation is 100% correct: what matters is that the value of money changes, and comparisons through time are difficult, hence why an index is quite useful. So we are going to convert these nominal prices to real prices. Real prices take inflation into account and so allow us to compare prices through time.
+The data used in this project will be downloaded from Housing Observatory (*Observatoire de l'Habitat*, a service from the Ministry of Housing, which monitors the evolution of prices in the housing market, among other useful services like the identification of vacant lots) in Excel format.
 
-So to summarise; our goal is to:
+The prices are given as nominal, and there is no index for the prices. This could creates some problem about the comparing the value of the amount. In this situation, the comparing the price in 2010 and in 2023 is difficult. Since \$500 (or 500 TL) in 2010 is more valuable than \$500 (or 500 TL) in 2022. In a random inflation calculator, to match the purchasing power of \$500 in 2003, you'd need to have \$671 in 2023 (and I'd say that we find very bad situation for TL). But it doesn't really matter if that calculation is 100% correct: what matters is that the value of money changes, and comparisons through time are difficult, hence why an index is quite useful. So we are going to convert these nominal prices to real prices. Real prices take inflation into account and so allow us to compare prices through time.
+
+Goal of this project:
 
 -   Get data trapped inside an Excel file into a neat data frame;
 -   Convert nominal to real prices using a simple method;
@@ -65,9 +46,9 @@ We are going to start in the most basic way possible; we are simply going to wri
 \newpage
 :::
 
-## Saving trapped data from Excel
+# Getting Data
 
-Getting data from Excel into a tidy data frame can be very tricky. This is because very often, Excel is used as some kind of dashboard or presentation tool. So data is made human-readable, in contrast to machine-readable. Let us quickly discuss this topic as it is essential to grasp the difference between the two (and in our experience, a lot of collective pain inflicted to statisticians and researchers could have been avoided if this concept was more well-known). The picture below shows an Excel file made for human consumption:
+The data in Excel is not always machine-readable. In some project, Excel is used as a presentation tool. Therefore data is human-readable rather than machine-readable. The picture below shows an Excel file made for human consumption:
 
 ::: {.content-hidden when-format="pdf"}
 <figure>
@@ -92,10 +73,11 @@ So why is this file not machine-readable? Here are some issues:
 -   The spreadsheet starts with a header that contains an image and some text;
 -   Numbers are text and use "," as the thousands separator;
 -   You don't see it in the screenshot, but each year is in a separate sheet.
+-   There is an empty rows in each sheets.
 
 That being said, this Excel file is still very tame, and going from this Excel to a tidy data frame will not be too difficult. In fact, we suspect that whoever made this Excel file is well aware of the contradicting requirements of human and machine-readable formatting of data, and strove to find a compromise. Because more often than not, getting human-readable data into a machine-readable format is a nightmare. We could call data like this *machine-friendly* data.
 
-If you want to follow along, you can download the Excel file [here](https://github.com/b-rodrigues/rap4all/raw/master/datasets/vente-maison-2010-2021.xlsx)[^index2-4] (downloaded on January 2023 from the [luxembourguish open data portal](https://data.public.lu/en/datasets/prix-annonces-des-logements-par-commune/)[^index2-5]). But you don't need to follow along with code, because I will link the completed scripts for you to download later.
+If you want to follow along, you can download the Excel file [here](https://github.com/b-rodrigues/rap4all/raw/master/datasets/vente-maison-2010-2021.xlsx)[^index2-4] (downloaded on January 2023 from the [luxembourguish open data portal](https://data.public.lu/en/datasets/prix-annonces-des-logements-par-commune/)[^index2-5]).
 
 [^index2-4]: https://is.gd/1vvBAc
 
@@ -116,90 +98,298 @@ library(purrr)
 library(readxl)
 library(stringr)
 library(janitor)
+library(ggplot2)
+library(tidyr)
 ```
 
-Even though this book is not about analysing data per se, let me just briefly explain what these packages do, in case you're not familiar with them. The `{dplyr}` package provides many functions for data manipulation, for example aggregating group-wise. `{purrr}` is a package for functional programming, a programming paradigm that I'll introduce later in the book, `{readxl}` reads in Excel workbooks, `{stringr}` is a package for manipulating strings, and finally `{janitor}` [@firke2023] provides some very nice functions, to perform some common tasks like easily rename every column of a data frame in snake case.
+The `{dplyr}` package provides many functions for data manipulation, for example aggregating group-wise. `{purrr}` is a package for functional programming, a programming paradigm that I'll introduce later in the book, `{readxl}` reads in Excel workbooks, `{stringr}` is a package for manipulating strings, and finally `{janitor}` [@firke2023] provides some very nice functions, to perform some common tasks like easily rename every column of a data frame in snake case.
+
+## Downloading The Data
 
 Next, the code below downloads the data, and puts it in a data frame:
 
-```{r, warning = FALSE, message = FALSE}
-# The url below points to an Excel file 
-# hosted on the book’s github repository 
-url <- "https://is.gd/1vvBAc"  
-raw_data <- tempfile(fileext = ".xlsx")  
-download.file(url, raw_data, method = "auto", mode = "wb")  
-sheets <- excel_sheets(raw_data)  
-read_clean <- function(..., sheet){  
-  read_excel(..., sheet = sheet) |>   
-    mutate(year = sheet) }  
-raw_data <- map(   
-  sheets,   
-  ~read_clean(raw_data,           
-              skip = 10,       
-              sheet = .)   
-  ) |>   
-  bind_rows() |>   
-  clean_names()  
-raw_data <- raw_data |> 
-  rename(     
-    locality = commune,  
-    n_offers = nombre_doffres,  
-    average_price_nominal_euros = prix_moyen_annonce_en_courant, 
-    average_price_m2_nominal_euros = prix_moyen_annonce_au_m2_en_courant, 
-    average_price_m2_nominal_euros = prix_moyen_annonce_au_m2_en_courant  
-    ) |>  
-  mutate(locality = str_trim(locality)) |>   
+```{r}
+# The url below points to an Excel file
+# hosted on the book’s github repository
+url <- "https://is.gd/1vvBAc"
+
+raw_data <- tempfile(fileext = ".xlsx")
+
+download.file(url, raw_data,
+              method = "auto",
+              mode = "wb")
+
+sheets <- excel_sheets(raw_data)
+
+read_clean <- function(..., sheet){
+  read_excel(..., sheet = sheet) |>
+    mutate(year = sheet)
+}
+
+raw_data <- map(
+  sheets,
+  ~read_clean(raw_data,
+              skip = 10,
+              sheet = .)
+                   ) |>
+  bind_rows() |>
+  clean_names()
+
+raw_data <- raw_data |>
+  rename(
+    locality = commune,
+    n_offers = nombre_doffres,
+    average_price_nominal_euros = prix_moyen_annonce_en_courant,
+    average_price_m2_nominal_euros = prix_moyen_annonce_au_m2_en_courant,
+    average_price_m2_nominal_euros = prix_moyen_annonce_au_m2_en_courant
+  ) |>
+  mutate(locality = str_trim(locality)) |>
   select(year, locality, n_offers, starts_with("average"))
 ```
 
-If you are familiar with the `{tidyverse}` [@wickham2019b] the above code should be quite easy to follow. We start by downloading the raw Excel file and saving the sheet names into a variable. We then use a function called `read_clean()`, which takes the path to the Excel file and the sheet names as an argument to read the required sheet into a data frame. We use `skip = 10` to skip the first 10 lines in each Excel sheet because the first 10 lines contain a header. The last thing this function does is add a new column called `year` which contains the year of the data. We're lucky because the sheet names are the years: "2010", "2011" and so on. We then map this function to the list of sheet names, thus reading in all the data from all the sheets into one list of data frames. We then use `bind_rows()`, to bind each data frame into a single data frame, by row. Finally, we rename the columns (by translating their names from French to English) and only select the required columns. If you don't understand each step of what is going on, don't worry too much about it; this book is not about learning how to use R.
+The raw Excel file is downloaded and saved with sheet names. `read_clean()`, function is created to skip empty lines in the top of the raw Excel file. In this project, first 10 lines are empty or contain a header so these lines should be skipped. For this purpose, `skip = 10` is used. New column called `year` is added using this function. The sheet names are the years like '2010', and '2011'. Due to this type of the data, it is easier to handling the data. Using `bind_rows()`, single data frame is obtained. The column names are in French. The columns are renamed translating from French to English. Finally, required columns are selected.
 
 Running this code results in a neat data set:
 
-`{r} raw_data}`
-
-But there's a problem: columns that should be of type numeric are of type character instead (`average_price_nominal_euros` and `average_price_m2_nominal_euros`). There's also another issue, which you would eventually catch as you'll explore the data: the naming of the communes is not consistent. Let's take a look:
-
-`{r} raw_data |>}   filter(grepl("Luxembourg", locality)) |>    count(locality)`
-
-We can see that the city of Luxembourg is spelled in two different ways. It's the same with another commune, Pétange:
-
-`{r} raw_data |>}   filter(grepl("P.tange", locality)) |>     count(locality)`
-
-So sometimes it is spelled correctly, with an "é", sometimes not. Let's write some code to correct both these issues:
-
-`{r} raw_data <- raw_data |>}   mutate(     locality = ifelse(grepl("Luxembourg-Ville", locality),                       "Luxembourg",                       locality),          locality = ifelse(grepl("P.tange", locality),                            "Pétange",                            locality)          ) |>     mutate(across(starts_with("average"),          as.numeric))`
-
-Now this is interesting -- converting the `average` columns to numeric resulted in some `NA` values. Let's see what happened:
-
-`{r} raw_data |>}   filter(is.na(average_price_nominal_euros))`
-
-It turns out that there are no prices for certain communes, but that we also have some rows with garbage in there. Let's go back to the raw data to see what this is about:
-
-::: {.content-hidden when-format="pdf"}
-<figure>
-
-![Always look at your data.](images/obs_hab_xlsx_missing.png){alt="Always look at your data."}</img>
-
-<figcaption>Always look at your data.</figcaption>
-
-</figure>
-:::
-
-::: {.content-visible when-format="pdf"}
-```{r, echo = F}
-#| fig-cap: "Always look at your data." 
-knitr::include_graphics("images/obs_hab_xlsx_missing.png")
-```
-:::
-
-So it turns out that there are some rows that we need to remove. We can start by removing rows where `locality` is missing. Then we have a row where `locality` is equal to "Total d'offres". This is simply the total of every offer from every commune. We could keep that in a separate data frame, or even remove it. The very last row states the source of the data and we can also remove it. Finally, in the screenshot above, we see another row that we don't see in our filtered data frame: one where `n_offers` is missing. This row gives the national average for columns
-
 ```{r}
-raw_data$average_price_m2_nominal_euros[raw_data$average_price_m2_nominal_euros=="*"] = NA
+raw_data
 ```
 
+There is a problem with the type of the data in the columns (`average_price_nominal_euros` and `average_price_m2_nominal_euros`). These data type should be a numeric rather than character. The other problem is about the naming of the communes is not consistent.
+
+The city of Luxembourg is spelled in two different ways.
+
 ```{r}
-raw_data_ikibinooon = raw_data[raw_data$year=='2010',]
-raw_data_ikibinooon[order(-raw_data_ikibinooon$n_offers),]
+raw_data |>
+  filter(grepl("Luxembourg", locality)) |>
+  count(locality)
+```
+
+There are 9 locality as Luxembourg and 2 locality as Luxembourg-Ville. The other problem is related with Petange locality.
+
+```{r}
+raw_data |>
+  filter(grepl("P.tange", locality)) |>
+  count(locality)
+```
+
+Petange is spelled as Petange and Pétange.
+
+To correct both these problems, the following code executed:
+
+```{r}
+raw_data <- raw_data |>
+  mutate(
+    locality = ifelse(grepl("Luxembourg-Ville", locality),
+                      "Luxembourg",
+                      locality),
+         locality = ifelse(grepl("P.tange", locality),
+                           "Pétange",
+                           locality)
+         ) |>
+  mutate(across(starts_with("average"),
+         as.numeric))
+```
+
+There are some `NA` values while converting the `average` columns to numeric. To check this:
+
+```{r}
+raw_data |>
+  filter(is.na(average_price_nominal_euros))
+```
+
+The prices are not available for certain communes. Some columns have variable like '\*'.
+
+![Always look at your data](images/obs_hab_xlsx_missing.png)
+
+Some rows should be removed from the data. First, the rows where `locality` is missing can be removed. Then, the row values is 'Total d'offers' as `locality` should be removed. Finally, in the screenshot above, we see another row that we don't see in our filtered data frame: one where `n_offers` is missing. This row gives the national average for columns `average_prince_nominal_euros` and `average_price_m2_nominal_euros`. What we are going to do is create two datasets: one with data on communes, and the other on national prices. Let's first remove the rows stating the sources:
+
+```{r}
+raw_data <- raw_data |>
+  filter(!grepl("Source", locality))
+```
+
+Let\'s now only keep the communes in our data:
+
+```{r}
+commune_level_data <- raw_data |>
+    filter(!grepl("nationale|offres", locality),
+           !is.na(locality))
+```
+
+And let\'s create a dataset with the national data as well:
+
+```{r}
+country_level <- raw_data |>
+  filter(grepl("nationale", locality)) |>
+  select(-n_offers)
+
+offers_country <- raw_data |>
+  filter(grepl("Total d.offres", locality)) |>
+  select(year, n_offers)
+
+country_level_data <- full_join(country_level, offers_country) |>
+  select(year, locality, n_offers, everything()) |>
+  mutate(locality = "Grand-Duchy of Luxembourg")
+```
+
+The data was cleaned. Before proceeding, all communes in Luxembourg is available or not in the dataset. The list of the communes from Luxembourg is needed. [Thankfully, Wikipedia has such a list](https://en.wikipedia.org/wiki/List_of_communes_of_Luxembourg)[^index2-6].
+
+[^index2-6]: https://w.wiki/6nPu
+
+An issue with scraping tables off the web is that they might change in the future. It is therefore a good idea to save the page by right clicking on it and then selecting save as, and then re-hosting it. I use Github pages to re-host the Wikipedia page above [here](https://b-rodrigues.github.io/list_communes/)[^index2-7]. I now have full control of this page, and won't get any bad surprises if someone decides to eventually update it. Instead of re-hosting it, you could simply save it as any other file of other projects.
+
+[^index2-7]: https://is.gd/lux_communes
+
+Scraping and saving this list:
+
+```{r}
+current_communes <- "https://is.gd/lux_communes" |>
+  rvest::read_html() |>
+  rvest::html_table() |>
+  purrr::pluck(2) |>
+  janitor::clean_names() |>
+  dplyr::filter(name_2 != "Name") |>
+  dplyr::rename(commune = name_2) |>
+  dplyr::mutate(commune = stringr::str_remove(commune, " .$"))
+```
+
+Using `{rvest}`, the table from re-hosted Wikipedia page can be scraped. `rvest::html_table()` returns a list of tables from the Wikipedia table. To keep the second table from the website `purrr::pluck()` could be used. `janitor::clean_names()` transforms column names written for human eyes into machine-friendly names (for example `Growth rate in %` would be transformed to `growth_rate_in_percent`) and the `{dplyr}` package for some further cleaning and renaming could be used. Finally, a dagger symbol next to certain communes names is removed, in other words it turns "Commune †" into "Commune".
+
+Check all the communes are available in dataset:
+
+```{r}
+setdiff(unique(commune_level_data$locality),
+        current_communes$commune)
+```
+
+There are many communes in project dataset as `commune_level_data`, but not in current communes as `current_communes`. There's one obvious reason: differences in spelling, for example, "Kaerjeng" in our data, but "Käerjeng" in the table from Wikipedia. But there's also a less obvious reason; since 2010, several communes have merged into new ones. So there are communes that are in our data in 2010 and 2011, but disappear from 2012 onwards. Some process should be applied to the data: first, get a list of all existing communes from 2010 onwards, and then, harmonise spelling. To avoid problems in the future, a list from Wikipedia can be used and re-hosted it on Github pages:
+
+```{r}
+former_communes <- "https://is.gd/lux_former_communes" |>
+  rvest::read_html() |>
+  rvest::html_table() |>
+  purrr::pluck(3) |>
+  janitor::clean_names() |>
+  dplyr::filter(year_dissolved > 2009)
+
+former_communes
+```
+
+Since 2010 many communes have merged to form new ones. The list of current and former communes should be combined, as well as harmonise their names:
+
+```{r}
+communes <- unique(c(former_communes$name,
+                     current_communes$commune))
+# we need to rename some communes
+
+# Different spelling of these communes between wikipedia and the data
+
+communes[which(communes == "Clemency")] <- "Clémency"
+communes[which(communes == "Redange")] <- "Redange-sur-Attert"
+communes[which(communes == "Erpeldange-sur-Sûre")] <- "Erpeldange"
+communes[which(communes == "Luxembourg City")] <- "Luxembourg"
+communes[which(communes == "Käerjeng")] <- "Kaerjeng"
+communes[which(communes == "Petange")] <- "Pétange"
+```
+
+Let's check again the commune names:
+
+```{r}
+setdiff(unique(commune_level_data$locality),
+        communes)
+```
+
+Comparing the communes that are in data with every commune that has existed since 2010. Cleaning the data is over. The analyzing of the data can be started at this point.
+
+Great! When we compare the communes that are in our data with every commune that has existed since 2010, we don't have any commune that is unaccounted for. So are we done with cleaning the data? Yes, we can now start with analysing the data. Take a look [here](https://raw.githubusercontent.com/b-rodrigues/rap4all/master/scripts/save_data.R)[^index2-8] to see the finalised script. Also read some of the comments that I've added. This is a typical R script, and at first glance, one might wonder what is wrong with it. Actually, not much, but the problem if you leave this script as it is, is that it is very likely that we will have problems rerunning it in the future. As it turns out, this script is not reproducible. But we will discuss this in much more detail later on. For now, let's analyse our cleaned data.
+
+[^index2-8]: https://is.gd/7PhUjd
+
+# Analyzing The Data
+
+Before starting the analyzing the data, Laspeyeres price index is computed. This price index allows to make comparisons through time; for example, the index at year 2012 measures how much more expensive (or cheaper) housing became relative to the base year, 2010 for this project. However, since there is an only one 'good' (housing), this index becomes quite simple to compute: it is nothing but the prices at year *t* divided by the prices in 2010.
+
+For the analysis, 5 communes are selected and plotted the evolution of prices compared to the national average.
+
+Let's compute the Laspeyeres index for each commune:
+
+```{r}
+commune_level_data <- commune_level_data %>%
+  group_by(locality) %>%
+  mutate(p0 = ifelse(year == "2010", average_price_nominal_euros, NA)) %>%
+  fill(p0, .direction = "down") %>%
+  mutate(p0_m2 = ifelse(year == "2010", average_price_m2_nominal_euros, NA)) %>%
+  fill(p0_m2, .direction = "down") %>%
+  ungroup() %>%
+  mutate(pl = average_price_nominal_euros/p0*100,
+         pl_m2 = average_price_m2_nominal_euros/p0_m2*100)
+```
+
+Let's also compute it for the whole country:
+
+```{r}
+country_level_data <- country_level_data %>%
+  mutate(p0 = ifelse(year == "2010", average_price_nominal_euros, NA)) %>%
+  fill(p0, .direction = "down") %>%
+  mutate(p0_m2 = ifelse(year == "2010", average_price_m2_nominal_euros, NA)) %>%
+  fill(p0_m2, .direction = "down") %>%
+  mutate(pl = average_price_nominal_euros/p0*100,
+         pl_m2 = average_price_m2_nominal_euros/p0_m2*100)
+```
+
+Creating a plot for 5 communes and comparing the price evolution in the communes to the national price evolution:
+
+```{r}
+communes <- c("Luxembourg",
+              "Esch-sur-Alzette",
+              "Mamer",
+              "Schengen",
+              "Wincrange")
+```
+
+```{r}
+
+filtered_data <- commune_level_data %>%
+  filter(locality == communes[1])
+
+for (com in 2:5) {
+  filtered_data2 <- commune_level_data %>%
+  filter(locality == communes[com])
+  
+  filtered_data <- bind_rows(
+    filtered_data,
+    filtered_data2
+  )
+}
+
+
+data_to_plot <- bind_rows(
+  country_level_data,
+  filtered_data
+)
+
+ggplot(data_to_plot) +
+  geom_line(aes(y = pl_m2,
+                x = year,
+                group = locality,
+                colour = locality))
+
+```
+
+Correlation between `average_price_nominal_euros` and `average_price_m2_nominal_euros` with index format:
+
+```{r}
+
+r <- round(cor(commune_level_data$pl, commune_level_data$pl_m2, use="na.or.complete"),2)
+p <- cor.test(commune_level_data$pl, commune_level_data$pl_m2)$p.value
+
+ggplot(commune_level_data, aes(y = pl_m2, x = pl)) +
+  geom_point() +
+  geom_smooth(method="lm", col="black") +
+  annotate("text", x=100, y=250, label=paste0("r = ", r), hjust=0) +
+  annotate("text", x=100, y=240, label=paste0("p = ", round(p, 3)), hjust=0) +
+  theme_classic()
+
+
 ```
