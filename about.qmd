@@ -2,8 +2,4 @@
 title: "About"
 ---
 
-Alican, Altan, Çağatay
-
-```{r}
-1 + 1
-```
+STAT570 Luxembourg Project created by Alican, Altan, Çağatay (HW1)

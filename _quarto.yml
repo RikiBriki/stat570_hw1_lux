@@ -2,17 +2,19 @@ project:
   type: website
 
 website:
-  title: "quatro572hw_week_four"
+  title: "STAT570 - Luxembourg Project"
   navbar:
     left:
       - href: index.qmd
         text: Home
       - href: index2.qmd
-        text: FirstCommit
+        text: Çağatay
       - href: index3.qmd
-        text: SecondCommit
+        text: patates domates
       - href: project_start.qmd
         text: MisterRodrigez'sProject
+      - href: shiny_app.qmd
+        text: shiny app test
       - about.qmd
 
 format:

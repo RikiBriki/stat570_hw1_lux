@@ -2,15 +2,16 @@
 title: "Quarto 572 HW"
 format: html
 editor: visual
+cache: true
 ---
 
-## Project Beginning
+## Popular Kids Analysis
 
-In this project , we have experimented with different quarto settings, and analysed a data set named "Popular Kids"
+In this page, we have analysed a research from 90s, where researchers have asked 9 to 11 years old kids about what are their goals, and asked them to rate from 1 to 5 about how much grades, sports , look, money make them popular
 
 ## Running Code
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+using the opiton " {r, warning = FALSE, message = FALSE} " for the codeblock will prevent error and messages
 
 ```{r, warning = FALSE, message = FALSE}
  library(foreign)
@@ -18,9 +19,10 @@ When you click the **Render** button a document will be generated that includes 
  library(DT)
  setwd(here::here()) 
  dataset=read.arff("PopularKids.arff")
+ 
 ```
 
-You can add options to executable code like this
+Bellow is a boxplot where students are grouped by their goals, and asked them about how much grades effect their popularity,
 
 ```{r}
 #| echo: false
@@ -36,7 +38,7 @@ ggplot(dataset, aes(x = Goals, y = Grades, fill = Goals)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+The `echo: false` option disabled the printing of code (only output is displayed). we noticed that students who have having high grades as their main goal , believe that having good grades do not make them very popular .
 
 ```{r}
 result <- kruskal.test(Grades ~ Goals, data = dataset)
@@ -47,23 +49,40 @@ print(result)
 means <- aggregate(Grades ~ Goals, data = dataset, FUN = mean)
 
 # Print the means
-print(means)
+print(means) 
+
+```
+
+Testing with a kruskal-wallis test we can confirm atleast one group belive their grades effect their popularity different than other groups in a statistically significant way, we have yet to do pair-wise tests .
+
+```{r}
 
 means <- aggregate(. ~ Goals, data = dataset[, c("Goals", "Grades", "Sports", "Looks", "Money")], FUN = mean)
 means_rounded <- means
 means_rounded[, -1] <- round(means[, -1], digits = 1)
+
+means_rounded
 datatable(means_rounded)
+
 ```
+
+Above we made a table for how kids with different goals rated certain numeric variables effect popularity, but how could we visualize a dataset in this format? we need to print it in long format, for this purpose we can use pivot_longer function or melt from reshape , lets do it different than in the course
 
 ```{r}
+data_long <- reshape2::melt(means_rounded, id.vars = "Goals")
 
-a=table(dataset$Gender,dataset$Goals)
-df=as.matrix(a)
-colnames(df)
-rownames(df)
-data_frame=rbind(c("",colnames(df)),c("boy",df[1,1:3]),c("girl",df[2,1:3]))
-datatable(data_frame)
+ggplot(data_long, aes(x = Goals, y = value, fill = variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Kids' Ratings of Goals, Grades, Sports, Looks, and Money",
+    x = "Goals",
+    y = "Ratings (1 to 5)"
+  ) +
+  scale_fill_manual(values = c("Grades" = "red", "Popular" = "blue", "Sports" = "green", "Looks" = "orange", "Money" = "purple")) +
+  theme_minimal()
 ```
+
+The above graph shows us that all groups believe Money gives most popularity, however we see that kids who value grades, believe grades effect popularity least, kids who have being popular as their goal, believe looks effect their popularity least, and kids who have sports as their main goal, believe sports effect their popularity least, Now lets take a look at the data by gender
 
 ```{r}
 
@@ -74,6 +93,26 @@ means_rounded2[, -1] <- round(means2[, -1], digits = 1)
 datatable(means_rounded2)
 ```
 
+Plotting with same technique
+
+```{r}
+#| code-fold: show
+data_long <- reshape2::melt(means_rounded2, id.vars = "Gender")
+ggplot(data_long, aes(x = Gender, y = value, fill = variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Ratings by Gender for Grades, Sports, Looks, and Money",
+    x = "Gender",
+    y = "Ratings (1 to 5)"
+  ) +
+  scale_fill_manual(values = c("Grades" = "red", "Sports" = "blue", "Looks" = "green", "Money" = "orange")) +
+  theme_minimal()
+```
+
+We notice the biggest difference for looks and sports, girls believe sports make you more popular , while boys believe looks make you more popular. Note that above code block is visible, and can be folded at will, thats thanks to code-fold: show option, to make default collapsed make it true, to make default not collapsed make it false which is the default value
+
+## Luxembourg Data Cleaning For Shiny App
+
 ```{r, warning = FALSE, message = FALSE}
 library(dplyr)
 library(purrr)
@@ -82,6 +121,8 @@ library(stringr)
 library(janitor)
 
 ```
+
+Here we do some data cleaning for our shiny app
 
 ```{r}
 # The url below points to an Excel file
@@ -130,10 +171,6 @@ raw_data$average_price_m2_nominal_euros[raw_data$average_price_m2_nominal_euros=
 
 ```{r}
 filter1=raw_data[order(raw_data$average_price_m2_nominal_euros),c(1,2,5)]
-filter2= filter1[filter1$year=="2010",]
 
-
-head(filter2)
+write.csv(filter1,"filtered_data.csv")
 ```
-
-The cheapest places mer m2 are listed above, notice how most of their names starts with W
