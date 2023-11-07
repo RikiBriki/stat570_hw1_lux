@@ -6,15 +6,11 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: Home
+        text: Altan's Home
       - href: index2.qmd
-        text: Çağatay
-      - href: index3.qmd
-        text: patates domates
+        text: Çağatay's Computer
       - href: project_start.qmd
-        text: MisterRodrigez'sProject
-      - href: shiny_app.qmd
-        text: shiny app test
+        text: Mr Alican's Coca-Cola Car
       - about.qmd
 
 format:

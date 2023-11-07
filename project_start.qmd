@@ -199,7 +199,7 @@ former_communes <- "https://is.gd/lux_former_communes" |>
   janitor::clean_names() |>
   dplyr::filter(year_dissolved > 2009)
 
-former_communes
+head(former_communes)
 
 ```
 
@@ -227,13 +227,13 @@ library(ggplot2)
 setdiff(unique(commune_level_data$locality),
       communes)
 
-unique(raw_data$locality)
-(raw_data$locality)
+length(unique(raw_data$locality))
+head(raw_data$locality)
 average_prices <- aggregate(raw_data$average_price_m2_nominal_euros ~ raw_data$locality, data=raw_data, FUN=mean)
 
-print(average_prices)
+head(average_prices)
 
-average_prices[order(average_prices$`raw_data$average_price_m2_nominal_euros`),]
+head(average_prices[order(average_prices$`raw_data$average_price_m2_nominal_euros`),])
 
 result <- raw_data %>%
   group_by(year) %>%
@@ -252,8 +252,7 @@ raw_data %>%
 
 ggplot(result, aes(x = year, y = average_price_nominal_euros)) +
   geom_bar(stat = "identity", fill = "blue") +
-  labs(title = "Average House Prices by Year", x = "Year", y = "Average Price (???)") +
-  scale_y_continuous(labels = scales::dollar_format(prefix = "???")) +
+  labs(title = "Average House Prices by Year", x = "Year", y = "Average Price (In USD)")+
   theme_minimal()
 
 
