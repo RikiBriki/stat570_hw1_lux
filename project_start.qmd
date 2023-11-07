@@ -279,7 +279,6 @@ merged_data <- merge(inflation_data, raw_data, by = "year"
 
 # I found the average prices of houses in each town whose names were corrupted in the data and after removing the "NA" data. I also observed how house prices changed each year. It is also possible to observe what I have mentioned graphically. You can clear all the data and see their ranking from cheap to expensive according to their average prices.
 
-
 # I will try to get one more graphic in the future as development. From Luxembourg government sources, I found the annual inflations on the specified dates. I want to find the change in average house prices on a yearly and percentage basis and compare them under the same scale. In this way, we will be able to clearly see how house prices move against inflation.
 
 
